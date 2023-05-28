@@ -7,7 +7,6 @@ import (
 	"github.com/sjpau/spaceships/src/game"
 )
 
-/*All `Game` code is suggested to be separeted from main.go*/
 func main() {
 	ebiten.SetWindowResizable(true)
 	ebiten.SetFPSMode(ebiten.FPSModeVsyncOffMaximum)
