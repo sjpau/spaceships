@@ -23,6 +23,7 @@ type EbitenObject interface {
 }
 
 func (o *Object) OutsideWindow() bool {
+	//TODO: test on different platforms: possible bug
 	w, h := ebiten.WindowSize()
 	if o.position.X < 0 ||
 		o.position.X >= float64(w) ||

@@ -20,7 +20,7 @@ func init() {
 }
 
 func main() {
-	ebiten.SetWindowResizable(true)
+	ebiten.SetWindowFloating(true)
 	ebiten.SetFPSMode(ebiten.FPSModeVsyncOffMaximum)
 	ebiten.SetCursorShape(ebiten.CursorShapeCrosshair)
 	ebiten.SetWindowTitle("Spaceships")

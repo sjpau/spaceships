@@ -2,6 +2,7 @@ package game
 
 import (
 	"math"
+	"math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/sjpau/vector"
@@ -45,4 +46,17 @@ func (b *Bullet) Draw(screen *ebiten.Image) {
 		o.GeoM.Translate(b.object.position.X, b.object.position.Y)
 		screen.DrawImage(b.object.image, o)
 	}
+}
+
+func NewBullet(img *ebiten.Image, owner *Object, damage int, seed int, a float64) *Bullet {
+	b := &Bullet{
+		object: &Object{
+			image: img,
+		},
+		owner:        owner,
+		damage:       damage + rand.Intn(seed),
+		acceleration: a,
+		released:     false,
+	}
+	return b
 }
