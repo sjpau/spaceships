@@ -3,6 +3,8 @@ package main
 import (
 	"embed"
 	"log"
+	"math/rand"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/sjpau/spaceships/src/game"
@@ -13,6 +15,7 @@ import (
 var assetsFS embed.FS
 
 func init() {
+	rand.Seed(time.Now().UnixNano())
 	graphics.Preload(&assetsFS)
 }
 

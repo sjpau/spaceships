@@ -4,7 +4,7 @@ import (
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/sjpau/spaceships/src/graphics"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/sjpau/vector"
 )
 
@@ -14,22 +14,16 @@ const (
 )
 
 type Game struct {
+	dt       float64
 	fsWidth  int
 	fsHeight int
 	cursor   vector.Vector2D
-	canvas   *ebiten.Image
 	player   *Player
 }
 
 func NewGame() *Game {
 	fsw, fsh := ebiten.ScreenSizeInFullscreen()
-	img := graphics.PlayerShips[graphics.SHIP_BLUE]
-	p := &Player{
-		object: &Object{
-			image: img,
-		},
-	}
-	p.object.position.X, p.object.position.Y = p.object.Center()
+	p := NewPlayer()
 	g := &Game{
 		fsWidth:  fsw,
 		fsHeight: fsh,
@@ -37,24 +31,51 @@ func NewGame() *Game {
 			X: 0,
 			Y: 0,
 		},
-		canvas: ebiten.NewImage(WIDTH, HEIGHT),
 		player: p,
 	}
 	return g
 }
 
 func (self *Game) Update() error {
+	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+		if self.player != nil {
+			if len(self.player.bullets) > 0 {
+				for i := range self.player.bullets {
+					if self.player.bullets[i] != nil {
+						if !self.player.bullets[i].released {
+							self.player.bullets[i].ReleaseTo(&self.cursor)
+							break
+						}
+					}
+				}
+			}
+		}
+	}
 	crx, cry := ebiten.CursorPosition()
 	self.cursor.X = float64(crx)
 	self.cursor.Y = float64(cry)
 	self.player.object.SetDirection(&self.cursor)
 
 	EbitenObjectUpdate(self.player)
+	for i := range self.player.bullets {
+		if self.player.bullets[i] != nil {
+			EbitenObjectUpdate(self.player.bullets[i])
+			if self.player.bullets[i].object.OutsideWindow() &&
+				self.player.bullets[i].released {
+				self.player.bullets[i] = nil
+			}
+		}
+	}
 	return nil
 }
 
 func (self *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{0, 0, 0, 255})
+	for i := range self.player.bullets {
+		if self.player.bullets[i] != nil {
+			EbitenObjectDraw(self.player.bullets[i], screen)
+		}
+	}
 	EbitenObjectDraw(self.player, screen)
 }
 

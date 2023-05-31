@@ -2,13 +2,17 @@ package game
 
 import (
 	"math"
+	"math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/sjpau/spaceships/src/graphics"
 )
 
 type Player struct {
 	object       *Object
 	acceleration float64
+	bullets      []*Bullet
+	ammo         int
 }
 
 func (p *Player) Update() {
@@ -32,4 +36,31 @@ func (p *Player) Draw(screen *ebiten.Image) {
 	o.GeoM.Rotate(p.object.angle)
 	o.GeoM.Translate(p.object.position.X, p.object.position.Y)
 	screen.DrawImage(p.object.image, o)
+}
+
+func NewPlayer() *Player {
+	//TODO: add cases for different ships
+	img := graphics.SpritesPlayerShips[graphics.BLUE]
+	bimg := graphics.SpritesBullets[graphics.BLUE]
+	p := &Player{
+		object: &Object{
+			image: img,
+		},
+		ammo: 50,
+	}
+	p.object.position.X, p.object.position.Y = p.object.Center()
+	bullets := make([]*Bullet, p.ammo*2)
+	for i := range bullets {
+		bullets[i] = &Bullet{
+			object: &Object{
+				image: bimg,
+			},
+			owner:        p.object,
+			damage:       10 + rand.Intn(10),
+			acceleration: 5,
+			released:     false,
+		}
+	}
+	p.bullets = bullets
+	return p
 }

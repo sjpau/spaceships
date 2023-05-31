@@ -22,6 +22,16 @@ type EbitenObject interface {
 	Draw(screen *ebiten.Image)
 }
 
+func (o *Object) OutsideWindow() bool {
+	w, h := ebiten.WindowSize()
+	if o.position.X < 0 ||
+		o.position.X >= float64(w) ||
+		o.position.Y < 0 ||
+		o.position.Y >= float64(h) {
+		return true
+	}
+	return false
+}
 func (o *Object) Center() (float64, float64) {
 	rect := o.image.Bounds()
 	X := rect.Min.X + (rect.Max.X-rect.Min.X)/2

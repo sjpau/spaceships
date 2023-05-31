@@ -3,7 +3,8 @@ package graphics
 import "github.com/hajimehoshi/ebiten/v2"
 
 const (
-	SHIP_BLUE = iota
+	BLUE = iota
 )
 
-var PlayerShips []*ebiten.Image
+var SpritesPlayerShips []*ebiten.Image
+var SpritesBullets []*ebiten.Image
