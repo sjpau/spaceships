@@ -1,60 +1,36 @@
 package game
 
 import (
-	"image/color"
-
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
-	"github.com/sjpau/spaceships/src/graphics"
-	"github.com/sjpau/vector"
-)
-
-const (
-	WIDTH  = 640
-	HEIGHT = 360
+	"github.com/sjpau/spaceships/src/game/state"
 )
 
 type Game struct {
-	dt       float64
-	fsWidth  int
-	fsHeight int
-	cursor   vector.Vector2D
-	player   *Player
+	states       []state.State
+	currentState int
 }
 
 func NewGame() *Game {
-	fsw, fsh := ebiten.ScreenSizeInFullscreen()
-	p := NewPlayer(graphics.SpritesPlayerShips[graphics.BLUE])
 	g := &Game{
-		fsWidth:  fsw,
-		fsHeight: fsh,
-		cursor: vector.Vector2D{
-			X: 0,
-			Y: 0,
-		},
-		player: p,
+		states:       []state.State{&state.Menu{}, &state.Gameplay{}},
+		currentState: 0,
+	}
+	for i := range g.states {
+		g.states[i].Init()
 	}
 	return g
 }
 
 func (self *Game) Update() error {
-	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
-		if self.player != nil {
-			self.player.Shoot(&self.cursor)
-		}
+	self.states[self.currentState].Update()
+	if self.states[self.currentState].Change() {
+		self.currentState += 1
 	}
-	crx, cry := ebiten.CursorPosition()
-	self.cursor.X = float64(crx)
-	self.cursor.Y = float64(cry)
-	self.player.object.SetDirection(&self.cursor)
-
-	EbitenObjectUpdate(self.player)
 	return nil
 }
 
 func (self *Game) Draw(screen *ebiten.Image) {
-	screen.Fill(color.RGBA{0, 0, 0, 255})
-	EbitenObjectDraw(self.player, screen)
+	self.states[self.currentState].Draw(screen)
 }
 
 func (self *Game) Layout(w, h int) (int, int) {

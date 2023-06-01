@@ -23,7 +23,7 @@ func main() {
 	ebiten.SetWindowFloating(true)
 	ebiten.SetFPSMode(ebiten.FPSModeVsyncOffMaximum)
 	ebiten.SetCursorShape(ebiten.CursorShapeCrosshair)
-	ebiten.SetWindowTitle("Spaceships")
+	ebiten.SetWindowTitle("Yan Sauchyk's Spaceships")
 	g := game.NewGame()
 	if err := ebiten.RunGame(g); err != nil {
 		log.Fatal(err)
